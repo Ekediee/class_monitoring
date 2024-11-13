@@ -1,0 +1,13 @@
+[server]
+runOnSave = true
+
+maxMessageSize = 4500
+
+[theme]
+backgroundColor="#b9e5e8"
+
+secondaryBackgroundColor="#0bbfce"
+
+textColor="black"
+
+primaryColor="rgba(5,96,180,0.4)"
