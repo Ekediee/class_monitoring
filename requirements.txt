@@ -1,5 +1,5 @@
 # kaleido==0.1.0.post1; platform_system == "Windows"
-kaleido
+kaleido<0.4; platform_system=="Linux"
 plotly
 setuptools
 streamlit

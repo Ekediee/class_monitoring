@@ -44,17 +44,18 @@ with sl.sidebar:
     week = sl.selectbox("Filter by Week", options=wee, index=len(wee)-1)
 
     filtered_df = data.query("session == @session and semester == @semester and week == @week")
+    filtered_df_sem = data.query("session == @session and semester == @semester")
 
 left_col, center_col, right_col = sl.columns(3)
 prev_week = get_prev_week(week, data)
 
 with left_col:
-    ref_total = get_reference(week, data)
+    ref_total = get_reference(week, filtered_df_sem)
     # print(ref_total)
     # get fig and display chart
     tot_monitored = total_monitored(filtered_df.shape[0], 'Total Classes Monitored', reference=ref_total)
     tot_monitored_rept = total_monitored_rpt(filtered_df.shape[0], 'Total Classes Monitored', reference=ref_total)
-
+    # sl.write(ref_total)
     tot_monitored_rept.write_image(
         'total_mon.png',
         engine="kaleido",
@@ -67,7 +68,7 @@ with left_col:
 with center_col:
     # Total classes that held
     held = filtered_df[(filtered_df['observation'] == 'The Teacher was Present In Class') | (filtered_df['observation'] == '--Select--')]
-    ref_held = get_reference(week, data, held='held')
+    ref_held = get_reference(week, filtered_df_sem, held='held')
     total_held = total_monitored(held.shape[0], 'Total Classes Held', reference=ref_held)
     total_held_rpt = total_monitored_rpt(held.shape[0], 'Total Classes Held', reference=ref_held)
 
@@ -83,7 +84,7 @@ with center_col:
 with right_col:
     # Total classes that held
     not_held = filtered_df[(filtered_df['observation'] == 'The Class did not hold') | (filtered_df['observation'] == 'The Teacher was Absent From Class') | (filtered_df['observation'] == 'The Teacher was present but left early') | (filtered_df['observation'] == '--Select--')]
-    ref_not_held = get_reference(week, data, held='not held')
+    ref_not_held = get_reference(week, filtered_df_sem, held='not held')
     total_not_held = total_monitored(not_held.shape[0], 'Total Classes Not Held', reference=ref_not_held)
     total_not_held_rpt = total_monitored_rpt(not_held.shape[0], 'Total Classes Not Held', reference=ref_not_held)
 
@@ -312,7 +313,7 @@ with sl.sidebar:
                 )
 
             sl.markdown(
-                f"{pdf.report_download(pdf_base64, report_name)} :white",
+                f"{pdf.report_download(pdf_base64, report_name)}",
                 unsafe_allow_html=True,
             )
 

@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  class_monitoring:
+    image: monitoring_dashboard:1.1.0
+    build: .
+    ports:
+      - 8501:8501

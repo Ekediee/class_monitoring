@@ -32,8 +32,8 @@ def total_monitored(df, label, reference, report=False):
         paper='rgba(42, 94, 179,1)'
         plot='rgba(42, 94, 179,1)'
     else:
-        paper='rgba(248, 248, 255, 0)'
-        plot='rgba(248, 248, 255, 0)'
+        paper='rgba(248, 248, 255, 1)'
+        plot='rgba(248, 248, 255, 1)'
 
     
     fig.update_layout(
@@ -168,10 +168,10 @@ def plot(df, x, y, title, color=None, line=True):
     fig.update_xaxes(visible=True, title="", fixedrange=True)
     fig.update_yaxes(visible=True, title="", fixedrange=True, showticklabels=True)
     fig.update_layout(
-        # paper_bgcolor='rgba(248, 248, 255, 0.2)',
-        # plot_bgcolor='rgba(248, 248, 255, 0.2)',
-        paper_bgcolor='rgba(0, 0, 0, 0)',
-        plot_bgcolor='rgba(0, 0, 0, 0)',
+        paper_bgcolor='rgba(248, 248, 255, 1)',
+        plot_bgcolor='rgba(248, 248, 255, 1)',
+        # paper_bgcolor='rgba(0, 0, 0, 0)',
+        # plot_bgcolor='rgba(0, 0, 0, 0)',
         title=title,
         height=350,
         showlegend=False,
@@ -198,7 +198,7 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
                         name=f'Week {int(week) - 1}', 
                         x=prev_week[x], 
                         y=prev_week[y],
-                        marker_color='#0A5B8E',
+                        marker_color='#df1010',
                         text=prev_week[y],
                         textposition='top center'
                     )
@@ -211,7 +211,7 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
                         name=f'Week {int(week) - 1}', 
                         x=prev_week[x], 
                         y=prev_week[y],
-                        marker_color='#0A5B8E',
+                        marker_color='#df1010',
                         width=0.4,
                         text=prev_week[y],
                         textposition='auto',
@@ -320,8 +320,8 @@ def table(df, title):
         height=450,
         showlegend=False,
         title=title,
-        paper_bgcolor='rgba(248, 248, 255, 0)',
-        plot_bgcolor='rgba(248, 248, 255, 0)',
+        paper_bgcolor='rgba(248, 248, 255, 1)',
+        plot_bgcolor='rgba(248, 248, 255, 1)',
     )
 
     return dfls, dfl, fig

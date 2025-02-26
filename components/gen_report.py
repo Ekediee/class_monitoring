@@ -25,7 +25,7 @@ class PDF(FPDF):
     def set_header(self, week):
         self.ln()
         # Page header section
-        self.image(Path(__file__).resolve().parent.parent / 'logo.png', x=20, y=2)
+        self.image(str(Path(__file__).resolve().parent.parent / 'logo.png'), x=20, y=2)
         self.set_font("Times", "B", 12)
         self.set_y(7)
         # self.set_x(128.5)
@@ -43,15 +43,15 @@ class PDF(FPDF):
         self.cell(0, 5, f"WEEK {week}", 0, 1, "C")
 
     def display_kpi(self):
-        self.image(Path(__file__).resolve().parent.parent / 'total_mon.png', x=20, y=33)
-        self.image(Path(__file__).resolve().parent.parent / 'total_held.png', x=111.5, y=33)
-        self.image(Path(__file__).resolve().parent.parent / 'total_not_held.png', x=200, y=33)
+        self.image(str(Path(__file__).resolve().parent.parent / 'total_mon.png'), x=20, y=33)
+        self.image(str(Path(__file__).resolve().parent.parent / 'total_held.png'), x=111.5, y=33)
+        self.image(str(Path(__file__).resolve().parent.parent / 'total_not_held.png'), x=200, y=33)
 
     def display_by_school(self):
-        self.image(Path(__file__).resolve().parent.parent / 'monitored_by_school.png', x=15, y=72)
+        self.image(str(Path(__file__).resolve().parent.parent / 'monitored_by_school.png'), x=15, y=72)
 
         self.add_page()
-        self.image(Path(__file__).resolve().parent.parent / 'monitored_by_day.png', x=15, y=10)
+        self.image(str(Path(__file__).resolve().parent.parent / 'monitored_by_day.png'), x=15, y=10)
         # self.output(Path(__file__).resolve().parent.parent / "pdf-with-image.pdf")
 
     def unheld(self, df, title=None, sec=False):
@@ -115,7 +115,7 @@ class PDF(FPDF):
             self.add_page()
         
         self.ln()
-        self.image(Path(__file__).resolve().parent.parent / 'monitored_by_agent.png', x=15, y=self.get_y())
+        self.image(str(Path(__file__).resolve().parent.parent / 'monitored_by_agent.png'), x=15, y=self.get_y())
 
         self.output(Path(__file__).resolve().parent.parent / "weekly monitoring report.pdf")
 
