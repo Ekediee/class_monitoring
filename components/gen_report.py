@@ -20,9 +20,9 @@ class PDF(FPDF):
         # Setting font: helvetica italic 8
         self.set_font("helvetica", "I", 8)
         # Printing page number:
-        self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
+        self.cell(0, 10, f"Page {self.page_no()}", align="C")
 
-    def set_header(self, week):
+    def set_header(self, week=None, semester=None, session=None):
         self.ln()
         # Page header section
         self.image(str(Path(__file__).resolve().parent.parent / 'logo.png'), x=20, y=2)
@@ -40,7 +40,10 @@ class PDF(FPDF):
         self.cell(0, 5, "CLASSROOM MONITORING REPORT", 0, 1, "C")
         self.set_y(24.5)
         # self.set_x(113.5)
-        self.cell(0, 5, f"WEEK {week}", 0, 1, "C")
+        if week is None:
+            self.cell(0, 5, f"{session}, {semester} Semester Report", 0, 1, "C")
+        else:
+            self.cell(0, 5, f"WEEK {week}", 0, 1, "C")
 
     def display_kpi(self):
         self.image(str(Path(__file__).resolve().parent.parent / 'total_mon.png'), x=20, y=33)
@@ -100,7 +103,7 @@ class PDF(FPDF):
             self.cell(15, height, str(row["Week"]), 0, 0, "C")
             if sec:
                 self.cell(18, height, str(row["School"]), 0, 0, "L")
-                self.cell(55, height, str(row["Department"]), 0, 1, "L")
+                self.cell(55, height, str(row["Comment"]), 0, 1, "L")
             else:
                 self.cell(45, height, str(row["Reporter"]), 0, 0, "L")
                 self.cell(55, height, str(row["Observation"]), 0, 1, "L")

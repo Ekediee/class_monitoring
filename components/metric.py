@@ -5,10 +5,11 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import requests
 import streamlit as sl
+from icecream import ic
 
 
 @sl.cache_data
-def total_monitored(df, label, reference, report=False):
+def total_monitored(df, label, reference=None, report=False):
     fig = go.Figure()
 
     fig.add_trace(
@@ -69,7 +70,7 @@ def total_monitored(df, label, reference, report=False):
     return fig
 
 @sl.cache_data
-def total_monitored_rpt(df, label, reference):
+def total_monitored_rpt(df, label, reference=None):
     fig = go.Figure()
 
     fig.add_trace(
@@ -106,6 +107,13 @@ def total_monitored_rpt(df, label, reference):
         #fillcolor="LightSkyBlue",
     )
 
+    
+
+    if reference is None:
+        message = ""
+    else:
+        message = "vs previous week"
+
     fig.update_layout(
         # margin=dict(t=30, b=0),
         showlegend=False,
@@ -129,7 +137,7 @@ def total_monitored_rpt(df, label, reference):
             }
         },
         title={
-            'text': 'vs previous week',
+            'text': message,
             'y': 0.12,
             'x': 0.50,
             'font': {'size': 5, 'color':'black'}
@@ -148,8 +156,8 @@ def plot(df, x, y, title, color=None, line=True):
             y=y,
             title=title,
             color=color,
-            text=y,
-            category_orders={'day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']},
+            text=y
+            # category_orders={'day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']},
         )
         fig.update_traces(textposition="top right")
     else: 
@@ -165,7 +173,12 @@ def plot(df, x, y, title, color=None, line=True):
             
         )
     
-    fig.update_xaxes(visible=True, title="", fixedrange=True)
+    fig.update_xaxes(visible=True, 
+                    title="", 
+                    fixedrange=True,
+                    categoryorder='array',
+                    categoryarray=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    )
     fig.update_yaxes(visible=True, title="", fixedrange=True, showticklabels=True)
     fig.update_layout(
         paper_bgcolor='rgba(248, 248, 255, 1)',
@@ -237,7 +250,7 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
                 color=color,
                 color_discrete_sequence =['rgba(42, 94, 179,1)']*len(df),
                 text=y,
-                category_orders={'day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
+                # category_orders={'day': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
             )
             fig.update_traces(textposition="top right")
         else: 
@@ -246,7 +259,7 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
                 df,
                 x=x,
                 y=y,
-                orientation="h",
+                orientation="v",
                 title=title,
                 color=color,
                 color_discrete_sequence =['rgba(42, 94, 179,1)']*len(df),
@@ -260,7 +273,14 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
               annotation_text=f"Average: {reference[0]}", 
               annotation_position="top left")
     
-    fig.update_xaxes(visible=True, title="", fixedrange=True, showgrid=False)
+    fig.update_xaxes(
+        visible=True, 
+        title="", 
+        fixedrange=True, 
+        showgrid=False,
+        categoryorder='array',
+        categoryarray=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    )
     fig.update_yaxes(visible=True, title="", fixedrange=True, showticklabels=True, showgrid=False)
     fig.update_layout(
         paper_bgcolor='rgba(179, 149, 42, 0.6)',
@@ -281,13 +301,13 @@ def plot_chart(df, x, y, title, color=None, line=True, text=None, margin_left=No
 @sl.cache_data
 def table(df, title):
     dfl = df[['class_date', 'class_time', 'lecturer', 'coursecode', 'week', 'reporter', 'observation']]
-    dfls = df[['class_date', 'day', 'class_time', 'lecturer', 'coursecode', 'week', 'school', 'department','observation','day_num']]
+    dfls = df[['class_date', 'day', 'class_time', 'lecturer', 'coursecode', 'week', 'school', 'comment','observation','day_num']]
 
     dfl = dfl[(dfl['observation'] == 'The Class did not hold') | (dfl['observation'] == 'The Teacher was Absent From Class') | (dfl['observation'] == 'The Teacher was present but left early')]
     dfls = dfls[(dfls['observation'] == 'The Class did not hold') | (dfls['observation'] == 'The Teacher was Absent From Class') | (dfls['observation'] == 'The Teacher was present but left early')]
 
     dfl.columns = ['Date & Time', 'Class time', 'Lecturer Name', 'Course Code', 'Week', 'Reporter', 'Observation']
-    dfls.columns = ['Date & Time', 'Day', 'Class time', 'Lecturer Name', 'Course Code', 'Week', 'School', 'Department', 'Observation','day_num']
+    dfls.columns = ['Date & Time', 'Day', 'Class time', 'Lecturer Name', 'Course Code', 'Week', 'School', 'Comment', 'Observation','day_num']
 
     dfl['Date & Time'] = dfl['Date & Time'].astype(str)
     dfls['Date & Time'] = dfls['Date & Time'].astype(str)
@@ -444,7 +464,8 @@ def clean_data():
     
     dfall['session'] = dfall['session'].replace(['2023/2024'], ['2024/2025'])
     dfall['semester'] = dfall['semester'].replace(['Summer'], ['First'])
-    dfall['week'] = dfall['week'].replace(['13'], ['1'])
+    # dfall['week'] = dfall['week'].replace(['13'], ['1'])
+    
     dfall.drop_duplicates(subset=['lecturer', 'coursecode', 'class_time', 'week'], inplace=True)
     dfall['day'] = dfall['timestamp'].dt.day_name()
     dfall['day_num'] = dfall['timestamp'].dt.dayofweek
@@ -471,6 +492,7 @@ def clean_data():
     dfall['class_date'] = dfall['timestamp']
 
     dfall['Week Num'] = dfall['week'].str.split(' ').str[1]
+    dfall['week'] = dfall['week'].astype(int)
 
 
     return dfall
@@ -482,7 +504,7 @@ def get_reference(week, df, held=None):
         
         prev_week_num = int(cur_week_df['week'].unique()[0]) - 1
         
-        prev_week_df = df.loc[df['week'] == str(prev_week_num)]
+        prev_week_df = df.loc[df['week'] == prev_week_num]
         
         if prev_week_df.shape[0] > 0:
             prev_week_df = prev_week_df.loc[prev_week_df['observation'] == 'The Teacher was Present In Class']
@@ -492,7 +514,7 @@ def get_reference(week, df, held=None):
     elif held == 'not held':
         cur_week_df = df.loc[df.week == week]
         prev_week_num = int(cur_week_df['week'].unique()[0]) - 1
-        prev_week_df = df.loc[df['week'] == str(prev_week_num)]
+        prev_week_df = df.loc[df['week'] == prev_week_num]
         if prev_week_df.shape[0] > 0:
             prev_week_df = prev_week_df.loc[(prev_week_df['observation'] == 'The Class did not hold') | (prev_week_df['observation'] == 'The Teacher was Absent From Class') | (prev_week_df['observation'] == 'The Teacher was present but left early') | (prev_week_df['observation'] == '--Select--')]
             refs = prev_week_df.shape[0]
@@ -501,7 +523,7 @@ def get_reference(week, df, held=None):
     else:
         cur_week_df = df.loc[df.week == week]
         prev_week_num = int(cur_week_df['week'].unique()[0]) - 1
-        prev_week_df = df.loc[df['week'] == str(prev_week_num)]
+        prev_week_df = df.loc[df['week'] == prev_week_num]
         if prev_week_df.shape[0] > 0:
             refs = prev_week_df.shape[0]
         else:
@@ -509,11 +531,11 @@ def get_reference(week, df, held=None):
 
     return refs
 
-def get_prev_week(week, df):
-    cur_week_df = df.loc[df.week == week]
+def get_prev_week(week, df, session, semester):
     
-    prev_week_num = int(cur_week_df['week'].unique()[0]) - 1
+    prev_week_num = int(week) - 1
     
-    prev_week_df = df.loc[df['week'] == str(prev_week_num)]
-
-    return prev_week_df
+    prev_week_df_filtered = df.loc[(df['week'] == prev_week_num) & (df['session'] == session) & (df['semester'] == semester)]
+    # prev_week_df = df.loc[df['week'] == str(prev_week_num)]
+    # ic(prev_week_df_filtered)
+    return prev_week_df_filtered
