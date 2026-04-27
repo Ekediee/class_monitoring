@@ -36,6 +36,10 @@ def total_monitored(df, label, reference=None, report=False):
         paper='rgba(248, 248, 255, 1)'
         plot='rgba(248, 248, 255, 1)'
 
+    if reference is None:
+        message = ""
+    else:
+        message = "vs previous week"
     
     fig.update_layout(
         # margin=dict(t=30, b=0),
@@ -60,7 +64,7 @@ def total_monitored(df, label, reference=None, report=False):
             }
         },
         title={
-            'text': 'vs previous week',
+            'text': message,
             'y': 0.12,
             'x': 0.38,
             'font': {'size': 12, 'color':'black'}
@@ -440,8 +444,9 @@ def recode_school(value):
 
 def clean_data():
     url = "https://academicplanning.babcock.edu.ng/classmonitor/reportapi.php"
-    browse = requests.get(url)
+    browse = requests.get(url, timeout=10)
     content = browse.json()
+    
 
     # header = ['Sn', 'LectName', 'Studcount', 'Cscode', 'Venue', 'Ddate', 'Ctime',
     #           'Mtime', 'Department', 'School', 'Observation', 'Semester', 'Session',
@@ -463,8 +468,9 @@ def clean_data():
     
     
     dfall['session'] = dfall['session'].replace(['2023/2024'], ['2024/2025'])
-    dfall['semester'] = dfall['semester'].replace(['Summer'], ['First'])
+    # dfall['semester'] = dfall['semester'].replace(['Summer'], ['First'])
     # dfall['week'] = dfall['week'].replace(['13'], ['1'])
+    dfall.loc[(dfall['session'] == '2024/2025') & (dfall['semester'] == 'Summer') & (dfall['week'] == '13'), 'week'] = '2'
     
     dfall.drop_duplicates(subset=['lecturer', 'coursecode', 'class_time', 'week'], inplace=True)
     dfall['day'] = dfall['timestamp'].dt.day_name()

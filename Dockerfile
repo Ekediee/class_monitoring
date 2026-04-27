@@ -18,7 +18,12 @@ COPY app.py /app/
 COPY components /app/components
 COPY .streamlit /app/.streamlit
 
-RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install -y ca-certificates
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+RUN pip install --default-timeout=100 kaleido==0.2.1
+RUN pip install --default-timeout=100 -r requirements.txt
+
+
 
 EXPOSE 8501
 

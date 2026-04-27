@@ -2,7 +2,7 @@ version: '3'
 
 services:
   class_monitoring:
-    image: class_monitoring:1.0.0
+    image: ekedie/class_monitoring:latest
     build: .
     ports:
       - 8501:8501

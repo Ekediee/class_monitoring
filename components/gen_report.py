@@ -103,10 +103,10 @@ class PDF(FPDF):
             self.cell(15, height, str(row["Week"]), 0, 0, "C")
             if sec:
                 self.cell(18, height, str(row["School"]), 0, 0, "L")
-                self.cell(55, height, str(row["Comment"]), 0, 1, "L")
+                self.multi_cell(55, height, str(row["Comment"]), 0, "L")
             else:
                 self.cell(45, height, str(row["Reporter"]), 0, 0, "L")
-                self.cell(55, height, str(row["Observation"]), 0, 1, "L")
+                self.multi_cell(55, height, str(row["Observation"]), 0, "L")
             # self.ln()
 
         # print(f"Current Y position: {self.get_y()}")

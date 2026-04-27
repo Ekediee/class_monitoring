@@ -38,17 +38,21 @@ data = clean_data()
 
 with sl.sidebar:
     sess = data["session"].unique()
-    sem = data["semester"].unique()
-    wee = data["week"].unique()
-    wee = sorted(wee)
-    # ic(wee)
+   
     session = sl.selectbox("Filter by Session", options=sess, index=len(sess)-1)
+    data = data.loc[data['session'] == session]
+    sem = data["semester"].unique()
+    sem = sorted(sem)
     semester = sl.selectbox("Filter by Semester", options=sem, index=len(sem)-1)
     semester_report = sl.checkbox("Display Semester Report")
 
     if semester_report:
         filtered_df = data.query("session == @session and semester == @semester")
     else:
+        wee_data = data.loc[data['semester'] == semester]
+        wee = wee_data["week"].unique()
+        wee = sorted(wee)
+        ic(wee)
         week = sl.selectbox("Filter by Week", options=wee, index=len(wee)-1)
 
         filtered_df = data.query("session == @session and semester == @semester and week == @week")
